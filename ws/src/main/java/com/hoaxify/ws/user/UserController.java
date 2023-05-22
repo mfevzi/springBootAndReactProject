@@ -26,5 +26,6 @@ public class UserController {
 		userService.save(user);
 		log.info(user.toString());
 		return new GenericResponse("User created");
+		//test amacli
 	}
 }
