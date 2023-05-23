@@ -1,13 +1,19 @@
 package com.hoaxify.ws.user;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hoaxify.ws.error.ApiError;
 import com.hoaxify.ws.shared.GenericResponse;
 
 @RestController
@@ -22,9 +28,19 @@ public class UserController {
 	//react projemizdeki 'package.json' dosyasinda yaptigimiz proxy ayari sayesinde crossorigin'a ihtiyacimiz kalmadi
 	//@CrossOrigin //react'in calistigi port ile spring boot'un calistigi port farkli oldugunda bu farkliliga takilmadan isler yurusun diye
 	@PostMapping("/api/users")
-	public GenericResponse createUser(@RequestBody User user) { //string turundeki json verisini benim istedigim nesne turunde ver diyoruz. Bunu 'Jackson' kutuphanesi sayesinde yapiyor
+	public /*GenericResponse*/ResponseEntity<?> createUser(@RequestBody User user) { //string turundeki json verisini benim istedigim nesne turunde ver diyoruz. Bunu 'Jackson' kutuphanesi sayesinde yapiyor
+		String username = user.getUserName();
+		if(username == null || username.isEmpty()) {
+			ApiError err = new ApiError(400, "validation error", "/api/users");
+			Map<String, String> validationErrors = new HashMap<>();
+			validationErrors.put("kullaniciAdi", "kullanici adi bos birakilamaz!");
+			err.setValidationErrors(validationErrors);
+			//validation hatalarinda bad request donmek gerekir 400 hatasi
+			//responseEntity generic bir class'tir ve ne dondugunu belirtmek gerekir
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+		}
 		userService.save(user);
 		log.info(user.toString());
-		return new GenericResponse("User created");
+		return ResponseEntity.ok(new GenericResponse("User created")); 
 	}
 }
