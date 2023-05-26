@@ -1,12 +1,12 @@
-spring:
-  datasource:
-    #generate-unique-name: false #bu ifade h2 veri tabaninin jdbc url kisminin her seferinde degismemesi icin
-    #embeded database'lerde verinin kaybolmamasi icin yukaridaki kodu yorum yapip asagidaki konfigurasyonu yapiyoruz
-    #oncelikle verinin dosyada tutulmasi icin bir path tanimlayacagiz
-    #h2'den sonraki . bulundugumuz adresi isaret eder
-    url: jdbc:h2:./devdb #devdb isimli dosyada bilgiler tutulacak
-    username: sa
-  jpa:
-    hibernate:
-      ddl-auto: update #uygulama baslarken uygulama entity'leri ile mevcut veri tabanini kıyasla ve degisiklikleri uygula
-    
+#spring:
+#  datasource:
+#    #generate-unique-name: false #bu ifade h2 veri tabaninin jdbc url kisminin her seferinde degismemesi icin
+#    #embeded database'lerde verinin kaybolmamasi icin yukaridaki kodu yorum yapip asagidaki konfigurasyonu yapiyoruz
+#    #oncelikle verinin dosyada tutulmasi icin bir path tanimlayacagiz
+#    #h2'den sonraki . bulundugumuz adresi isaret eder
+#    url: jdbc:h2:./devdb #devdb isimli dosyada bilgiler tutulacak
+#    username: sa
+#  jpa:
+#    hibernate:
+#      ddl-auto: update #uygulama baslarken uygulama entity'leri ile mevcut veri tabanini kıyasla ve degisiklikleri uygula
+#    

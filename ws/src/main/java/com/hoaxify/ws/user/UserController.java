@@ -8,9 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hoaxify.ws.error.ApiError;
@@ -31,7 +35,8 @@ public class UserController {
 	//@CrossOrigin //react'in calistigi port ile spring boot'un calistigi port farkli oldugunda bu farkliliga takilmadan isler yurusun diye
 	@PostMapping("/api/users")
 	//@Valid ile, gelen requestin entity bazinda valid olmasi gerektigini soyluyoruz. Orada tanimlanan sekle uygun olmali
-	public /*GenericResponse*/ResponseEntity<?> createUser(@Valid @RequestBody User user) { //string turundeki json verisini benim istedigim nesne turunde ver diyoruz. Bunu 'Jackson' kutuphanesi sayesinde yapiyor
+	public GenericResponse/*ResponseEntity<?>*/ createUser(@Valid @RequestBody User user) { //string turundeki json verisini benim istedigim nesne turunde ver diyoruz. Bunu 'Jackson' kutuphanesi sayesinde yapiyor
+		/* artik hatalari 'validationHatasiYakala' metodu yakalayacagindan asagidaki kontrollere gerek yok
 		ApiError err = new ApiError(400, "validation error", "/api/users");
 		Map<String, String> validationErrors = new HashMap<>();
 		
@@ -51,9 +56,23 @@ public class UserController {
 			//responseEntity generic bir class'tir ve ne dondugunu belirtmek gerekir
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 		}
-		
+		*/
 		userService.save(user);
 		log.info(user.toString());
-		return ResponseEntity.ok(new GenericResponse("User created")); 
+		//return ResponseEntity.ok(new GenericResponse("User created")); 
+		return new GenericResponse("User created");
+	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class) //bu sinifin (userController) dahil oldugu bir zincirde 'MethodArgumentNotValidException' hatasi olursa 'validationHatasiYakala' metodunu calistir
+	@ResponseStatus(HttpStatus.BAD_REQUEST) //bu metot 'bad request' respons donsun. Aksi durumda 200 doner
+	public ApiError validationHatasiYakala(MethodArgumentNotValidException exception) {
+		ApiError err = new ApiError(400, "validation error", "/api/users");
+		Map<String, String> validationErrors = new HashMap<>();
+		//olusabilecek hatalari ve aciklamalarini map'imize koyalim
+		for(FieldError fieldError:exception.getBindingResult().getFieldErrors()) {
+			validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
+		}
+		err.setValidationErrors(validationErrors);
+		return err;
 	}
 }
