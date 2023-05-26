@@ -18,6 +18,7 @@ public class User {
 	private long id;
 	@NotNull
 	@Size(min = 4, max = 255)
+	@UniqueUsername
 	private String kullaniciAdi;
 	@NotNull
 	@Size(min = 4, max = 15)

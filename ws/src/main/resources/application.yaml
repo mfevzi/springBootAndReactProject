@@ -10,3 +10,13 @@
 #    hibernate:
 #      ddl-auto: update #uygulama baslarken uygulama entity'leri ile mevcut veri tabanini kıyasla ve degisiklikleri uygula
 #    
+#kullaniciAdi parametresini biz veri tabani oncesinde validation kontrolune tabi tutuyoruz..
+#..ancak bu islem ekstra olarak veri tabani isleminde de hibernate tarafindan uygulaniyor. Bu katmanda uygulanmasin..
+#..diye asagidaki konfigurasyonu yapiyoruz
+spring:
+  jpa:
+    properties:
+      javax:
+        persistence:
+          validation:
+            mode: none
