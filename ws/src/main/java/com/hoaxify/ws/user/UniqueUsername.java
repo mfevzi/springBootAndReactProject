@@ -22,7 +22,7 @@ import jakarta.validation.constraints.NotNull.List;
 @Constraint(validatedBy = { UniqueUsernameValidator.class }) //bu anotasyon kullanildigindaki ilgili muhattap sinif
 public @interface UniqueUsername {
 	//bean validation isleminde asagidaki uclunun olmasi sarttir
-	String message() default "Girilen kullanici adi daha once kullanilmis. Lutfen farkli bir kullanici adi giriniz";
+	String message() default "{hoaxify.constraints.username.Unique.message}";
 
 	Class<?>[] groups() default { };
 
