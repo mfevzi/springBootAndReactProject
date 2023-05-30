@@ -16,7 +16,7 @@ public class User {
 	@Id
 	@GeneratedValue //default hali otomatik olarak id degeri uretir
 	private long id;
-	@NotNull
+	@NotNull(message = "{hoaxify.constraints.username.NotNull.message}") //kendimiz biz key olusturduk ve buna ozel validation mesaji gosterecegiz
 	@Size(min = 4, max = 255)
 	@UniqueUsername
 	private String kullaniciAdi;
@@ -24,7 +24,8 @@ public class User {
 	@Size(min = 4, max = 15)
 	private String displayName;
 	@NotNull
-	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).*$", message = "şifreniz en az 1 büyük harf, 1 küçük harf ve 1 rakam içermelidir")
+	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).*$", 
+	message = "{hoaxify.constraints.password.Pattern.message}")
 	@Size(min = 8, max = 255)
 	private String password;
 }
