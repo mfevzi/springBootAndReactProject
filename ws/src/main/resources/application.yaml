@@ -20,3 +20,8 @@ spring:
         persistence:
           validation:
             mode: none
+            
+#Log seviyesini debug seviyesine cekelim. Yani artiralim
+#logging:
+#  level:
+#    '[org.springframework]': debug
