@@ -35,11 +35,13 @@ public class WsApplication {
 		//bir interface'nin sadece bir tane metodu varsa arrow function kullanabiliriz
 		//'CommandLineRunner' class'inin run metodunu lambda function olarak kullandik
 		return (args) -> {
-			User user = new User();
-			user.setKullaniciAdi("User1");
-			user.setDisplayName("Display1");
-			user.setPassword("P4ssword");
-			userService.save(user);
+			for(int i = 1; i < 10; i++) {
+				User user = new User();
+				user.setKullaniciAdi("User"+i);
+				user.setDisplayName("Display"+i);
+				user.setPassword("P4ssword");
+				userService.save(user);
+			}
 		};
 	}
 }

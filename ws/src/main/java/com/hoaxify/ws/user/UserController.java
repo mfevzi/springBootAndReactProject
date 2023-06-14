@@ -1,13 +1,18 @@
 package com.hoaxify.ws.user;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.hoaxify.ws.shared.GenericResponse;
+import com.hoaxify.ws.shared.Views;
 
 import jakarta.validation.Valid;
 
@@ -50,6 +55,12 @@ public class UserController {
 		log.info(user.toString());
 		//return ResponseEntity.ok(new GenericResponse("User created")); 
 		return new GenericResponse("User created");
+	}
+	
+	@GetMapping("/api/users")
+	@JsonView(Views.Base.class) //cevap donerken 'Views.Base.class' ile işaretlenmis alanlari don diyoruz.
+	public List<User> getirTumKullanicilar(){
+		return userService.getirTumKullanicilar();
 	}
 	
 	//asagidaki kod 'ErrorHandler' sinifinin devreye alinmasi ile iptal edilmistir

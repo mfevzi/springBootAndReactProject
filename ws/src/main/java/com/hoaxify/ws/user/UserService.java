@@ -1,5 +1,7 @@
 package com.hoaxify.ws.user;
 
+import java.util.List;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,10 @@ public class UserService {
 	public void save(User user) {
 		user.setPassword(this.passwordEncoder.encode(user.getPassword())); //bu sekilde encode edilmis bir string tekrar decode edilemez
 		userRepository.save(user);
+	}
+
+	public List<User> getirTumKullanicilar() {
+		return userRepository.findAll();
 	}
 
 }
