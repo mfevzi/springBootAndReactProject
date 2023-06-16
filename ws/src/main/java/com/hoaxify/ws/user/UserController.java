@@ -60,7 +60,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/api/users")
-	//@JsonView(Views.Base.class) //cevap donerken 'Views.Base.class' ile işaretlenmis alanlari don diyoruz.
+	@JsonView(Views.Base.class) //cevap donerken 'Views.Base.class' ile işaretlenmis alanlari don diyoruz.
 	//spring data'nin pageable objesini kullaniyoruz. Verileri sayfa sayfa alabilmek icin
 	public Page<User> getirTumKullanicilar(Pageable page){//page nesnesi default parametrelere sahiptir ve kullanici girdisine gore de calisabilir
 		return userService.getirTumKullanicilar(page);
