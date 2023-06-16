@@ -35,7 +35,7 @@ public class WsApplication {
 		//bir interface'nin sadece bir tane metodu varsa arrow function kullanabiliriz
 		//'CommandLineRunner' class'inin run metodunu lambda function olarak kullandik
 		return (args) -> {
-			for(int i = 1; i < 10; i++) {
+			for(int i = 1; i < 31; i++) {
 				User user = new User();
 				user.setKullaniciAdi("User"+i);
 				user.setDisplayName("Display"+i);

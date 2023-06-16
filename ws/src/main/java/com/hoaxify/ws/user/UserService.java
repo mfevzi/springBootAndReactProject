@@ -2,6 +2,9 @@ package com.hoaxify.ws.user;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +30,11 @@ public class UserService {
 		user.setPassword(this.passwordEncoder.encode(user.getPassword())); //bu sekilde encode edilmis bir string tekrar decode edilemez
 		userRepository.save(user);
 	}
-
-	public List<User> getirTumKullanicilar() {
-		return userRepository.findAll();
+	
+	//verileri sayfa sayfa alabilmek icin spring data'nin pageable nesnesini kullaniyoruz
+	public Page<User> getirTumKullanicilar(Pageable page) {
+		//veri tabanindan donen listeyi sayfa sayfa almak istersek donus tipi 'pageable' olan metodu kullaniriz
+		return userRepository.findAll(page);
 	}
 
 }

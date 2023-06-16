@@ -20,7 +20,14 @@ spring:
         persistence:
           validation:
             mode: none
-            
+
+#veri tabanindan verileri pageable ozelligi kullanarak cekerken page ve size ozelliklerinin degerlerini degistirebiliriz
+  data:
+    web:
+      pageable:
+        page-parameter: pageNumber
+        size-parameter: pageSize
+
 #Log seviyesini debug seviyesine cekelim. Yani artiralim
 #logging:
 #  level:

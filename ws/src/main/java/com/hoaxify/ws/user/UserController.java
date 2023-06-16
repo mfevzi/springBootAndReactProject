@@ -5,6 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,9 +60,10 @@ public class UserController {
 	}
 	
 	@GetMapping("/api/users")
-	@JsonView(Views.Base.class) //cevap donerken 'Views.Base.class' ile işaretlenmis alanlari don diyoruz.
-	public List<User> getirTumKullanicilar(){
-		return userService.getirTumKullanicilar();
+	//@JsonView(Views.Base.class) //cevap donerken 'Views.Base.class' ile işaretlenmis alanlari don diyoruz.
+	//spring data'nin pageable objesini kullaniyoruz. Verileri sayfa sayfa alabilmek icin
+	public Page<User> getirTumKullanicilar(Pageable page){//page nesnesi default parametrelere sahiptir ve kullanici girdisine gore de calisabilir
+		return userService.getirTumKullanicilar(page);
 	}
 	
 	//asagidaki kod 'ErrorHandler' sinifinin devreye alinmasi ile iptal edilmistir
