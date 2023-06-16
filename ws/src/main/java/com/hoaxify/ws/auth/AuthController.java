@@ -1,15 +1,13 @@
 package com.hoaxify.ws.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.hoaxify.ws.shared.CurrentUser;
-import com.hoaxify.ws.shared.Views;
 import com.hoaxify.ws.user.User;
 import com.hoaxify.ws.user.UserRepository;
+import com.hoaxify.ws.user.vm.UserVM;
 
 @RestController
 public class AuthController {
@@ -21,8 +19,7 @@ public class AuthController {
 	//PasswordEncoder passwordEncode = new BCryptPasswordEncoder();
 	
 	@PostMapping("/api/auth")
-	@JsonView(Views.Base.class) //cevap donerken 'Views.Base.class' ile işaretlenmis alanlari don diyoruz. Ornegin password donmesin cevap olarak
-	ResponseEntity<?> handleAuthentication(@CurrentUser User user) { //bizim yazdigimiz anotasyon ile object cast islemi yapilacak
+	UserVM handleAuthentication(@CurrentUser User user) { //bizim yazdigimiz anotasyon ile object cast islemi yapilacak
 		
 		//artik header bilgisi spring security'den gelecegi icin asagidaki if kosuluna gerek yok
 		/*
@@ -59,7 +56,7 @@ public class AuthController {
 		 * ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError); }
 		 */
 		
-		return ResponseEntity.ok(user); 
+		return new UserVM(user);
 	}
 	
 	//**** asagidaki kode gerek kalmadi cunku 'errorHandler.java' ile standart hale getirdik

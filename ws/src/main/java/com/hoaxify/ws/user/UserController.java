@@ -1,6 +1,7 @@
 package com.hoaxify.ws.user;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hoaxify.ws.shared.GenericResponse;
-import com.hoaxify.ws.shared.Views;
+import com.hoaxify.ws.user.vm.UserVM;
 
 import jakarta.validation.Valid;
 
@@ -60,10 +61,15 @@ public class UserController {
 	}
 	
 	@GetMapping("/api/users")
-	@JsonView(Views.Base.class) //cevap donerken 'Views.Base.class' ile işaretlenmis alanlari don diyoruz.
 	//spring data'nin pageable objesini kullaniyoruz. Verileri sayfa sayfa alabilmek icin
-	public Page<User> getirTumKullanicilar(Pageable page){//page nesnesi default parametrelere sahiptir ve kullanici girdisine gore de calisabilir
-		return userService.getirTumKullanicilar(page);
+	public Page<UserVM> getirTumKullanicilar(Pageable page){//page nesnesi default parametrelere sahiptir ve kullanici girdisine gore de calisabilir
+		//user objemizi userVM'ye donusturmek icin 'map' metodunu kullanacagiz
+		//map icindeki fonksiyon user alsin ve userVM donsun
+		//burada java 8 ile birlikte gelen METOT REFERANS ozelligini (map(UserVM::new)) kullanalim
+		//user tipinde donen her bir nesne map metodu araciligi ile userVM'in constructor metodune gonderilir ve oradan..
+		//..donen userVM tipindeki nesneyi dondurur
+		return userService.getirTumKullanicilar(page).map(UserVM::new);
+		
 	}
 	
 	//asagidaki kod 'ErrorHandler' sinifinin devreye alinmasi ile iptal edilmistir

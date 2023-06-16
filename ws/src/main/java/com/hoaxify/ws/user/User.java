@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.hoaxify.ws.shared.Views;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,12 +35,10 @@ public class User implements UserDetails {
 																			// validation mesaji gosterecegiz
 	@Size(min = 4, max = 255)
 	@UniqueUsername
-	@JsonView(Views.Base.class) // jsonView kullanarak alan isaretlemesi yaptik
 	private String kullaniciAdi;
 
 	@NotNull
 	@Size(min = 4, max = 15)
-	@JsonView(Views.Base.class) // jsonView kullanarak alan isaretlemesi yaptik
 	private String displayName;
 
 	@NotNull
@@ -49,7 +46,6 @@ public class User implements UserDetails {
 	@Size(min = 8, max = 255)
 	private String password;
 
-	@JsonView(Views.Base.class) // jsonView kullanarak alan isaretlemesi yaptik
 	private String image;
 
 	@Override
