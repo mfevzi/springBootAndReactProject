@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hoaxify.ws.error.NotFoundException;
+
 @Service
 public class UserService {
 	
@@ -32,9 +34,21 @@ public class UserService {
 	}
 	
 	//verileri sayfa sayfa alabilmek icin spring data'nin pageable nesnesini kullaniyoruz
-	public Page<User> getirTumKullanicilar(Pageable page) {
+	public Page<User> getirTumKullanicilar(Pageable page, User user) {
+		//eger loggin olmus kullanici varsa o kullanicinin olmadigi kullanici listesini donelim
+		if(user != null) {
+			return userRepository.findByKullaniciAdiNot(user.getKullaniciAdi(), page);
+		}
 		//veri tabanindan donen listeyi sayfa sayfa almak istersek donus tipi 'pageable' olan metodu kullaniriz
 		return userRepository.findAll(page);
+	}
+
+	public User getByUsername(String username) {
+		User userInDbUser = userRepository.findByKullaniciAdi(username);
+		if(userInDbUser == null) {
+			throw new NotFoundException();
+		}
+		return userInDbUser;
 	}
 
 }
