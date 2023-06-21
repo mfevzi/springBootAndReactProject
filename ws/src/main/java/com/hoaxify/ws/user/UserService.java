@@ -52,7 +52,7 @@ public class UserService {
 		return userInDbUser;
 	}
 	
-	//kullanicinin displayName bilgisini guncelleyen metot
+	//kullanicinin displayName bilgisini guncelleyen metot yazalim
 	public User updateUser(String username, UserUpdateVM updatedUser) {
 		//once username bilgisinden var olan kullanicimizi bulalim
 		User userUpdate = getByUsername(username);
