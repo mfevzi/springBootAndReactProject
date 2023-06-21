@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hoaxify.ws.error.NotFoundException;
+import com.hoaxify.ws.user.vm.UserUpdateVM;
 
 @Service
 public class UserService {
@@ -49,6 +50,16 @@ public class UserService {
 			throw new NotFoundException();
 		}
 		return userInDbUser;
+	}
+	
+	//kullanicinin displayName bilgisini guncelleyen metot
+	public User updateUser(String username, UserUpdateVM updatedUser) {
+		//once username bilgisinden var olan kullanicimizi bulalim
+		User userUpdate = getByUsername(username);
+		//request'ten gelen ve UserUpdateVM tipine donusturulmus data'yi yeni displayName olarak objeye ata
+		userUpdate.setDisplayName(updatedUser.getDisplayName());
+		//save metodu kaydettigi/update ettigi entity'i return eder
+		return userRepository.save(userUpdate);
 	}
 
 }

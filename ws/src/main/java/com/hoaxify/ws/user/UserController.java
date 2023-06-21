@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hoaxify.ws.shared.CurrentUser;
 import com.hoaxify.ws.shared.GenericResponse;
+import com.hoaxify.ws.user.vm.UserUpdateVM;
 import com.hoaxify.ws.user.vm.UserVM;
 
 import jakarta.validation.Valid;
@@ -34,6 +36,7 @@ public class UserController {
 	
 	//react projemizdeki 'package.json' dosyasinda yaptigimiz proxy ayari sayesinde crossorigin'a ihtiyacimiz kalmadi
 	//@CrossOrigin //react'in calistigi port ile spring boot'un calistigi port farkli oldugunda bu farkliliga takilmadan isler yurusun diye
+	//@RequestBody annotasyonu ile POST veya PUT request'leri handle edilir. Genelde JSON veya XML formatında bir request'i nesneye dönüştürmek için kullanılır.
 	@PostMapping("/users")
 	//@Valid ile, gelen requestin entity bazinda valid olmasi gerektigini soyluyoruz. Orada tanimlanan sekle uygun olmali
 	public GenericResponse/*ResponseEntity<?>*/ createUser(@Valid @RequestBody User user) { //string turundeki json verisini benim istedigim nesne turunde ver diyoruz. Bunu 'Jackson' kutuphanesi sayesinde yapiyor
@@ -64,5 +67,15 @@ public class UserController {
 	public UserVM getUser(@PathVariable String username) {
 		User user = userService.getByUsername(username);
 		return new UserVM(user);
+	}
+	
+	//var olan bir kullanicinin displayName bilgisini guncellemek icin metot yazalim
+	//guncelleme islemi icin 'putMapping' kullaniyoruz
+	//hangi kullanicinin displayName'ini guncelleyecegimize iliskin bilgiye ihtiyacimiz oldugundan kullanicinin unique degerini de (username) alalim
+	//@RequestBody annotasyonu ile POST veya PUT request'leri handle edilir. Genelde JSON veya XML formatında bir request'i nesneye dönüştürmek için kullanılır.
+	@PutMapping("/users/{username}")
+	public UserVM updateUser(@PathVariable String username, @RequestBody UserUpdateVM updatedUser) {
+		User userUpdate = userService.updateUser(username, updatedUser);
+		return new UserVM(userUpdate);
 	}
 }
