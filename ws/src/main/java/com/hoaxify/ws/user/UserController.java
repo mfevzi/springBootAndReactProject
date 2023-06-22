@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,8 +75,13 @@ public class UserController {
 	//hangi kullanicinin displayName'ini guncelleyecegimize iliskin bilgiye ihtiyacimiz oldugundan kullanicinin unique degerini de (username) alalim
 	//@RequestBody annotasyonu ile POST veya PUT request'leri handle edilir. Genelde JSON veya XML formatında bir request'i nesneye dönüştürmek için kullanılır.
 	@PutMapping("/users/{username}")
-	public UserVM updateUser(@PathVariable String username, @RequestBody UserUpdateVM updatedUser) {
-		User userUpdate = userService.updateUser(username, updatedUser);
-		return new UserVM(userUpdate);
+	//bu istegi atmaya kullanicinin yetkisi var mi diye kontrol ediyoruz. "updateUser" metodu calismadan..
+	// once (@PreAuthorize) calisacak. Bu anotasyon icine yazilan ifade 'Spring Expression Language (SpEL)'
+	//SpEL sayesinde hash (#) ifadesi ile metot parametrelerine erisebiliriz
+	//'username' degeri 'loggedInUser' nesnesinin 'kullaniciAdi' alanina esit degilse spring security 403 forbidden firlatir
+	@PreAuthorize("#username == #loggedInUser.kullaniciAdi")
+	public UserVM updateUser(@PathVariable String username, @RequestBody UserUpdateVM updatedUser, @CurrentUser User loggedInUser) {
+		User user = userService.updateUser(username, updatedUser);
+		return new UserVM(user);
 	}
 }
