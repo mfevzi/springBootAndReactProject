@@ -48,7 +48,7 @@ public class User implements UserDetails {
 	private String password;
 	
 	//bu alanin 'large object' (Lob) oldugunu belirtelim. File tipi string'e donusturuldugunde boyutu buyuk oldugundan
-	@Lob
+	//@Lob
 	private String image;
 
 	@Override

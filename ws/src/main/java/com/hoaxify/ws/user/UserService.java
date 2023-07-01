@@ -1,5 +1,10 @@
 package com.hoaxify.ws.user;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hoaxify.ws.error.NotFoundException;
+import com.hoaxify.ws.file.FileService;
 import com.hoaxify.ws.user.vm.UserUpdateVM;
 
 @Service
@@ -23,12 +29,15 @@ public class UserService {
 
 	// spring security kullanarak password sifreleme yapacagiz
 	PasswordEncoder passwordEncoder;
-
-	// @Autowired eger sinif icinde sadece bir tane constructor varsa 'AutoWired'
-	// anotasyonuna ihtiyac duyulmaz. Koysak da olur
-	public UserService(UserRepository userRepository) {
+	
+	FileService fileService;
+	
+	// @Autowired eger sinif icinde sadece bir tane constructor varsa 'AutoWired'..
+	// ..anotasyonuna ihtiyac duyulmaz. Koysak da olur
+	public UserService(UserRepository userRepository, FileService fileService) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = new BCryptPasswordEncoder();
+		this.fileService = fileService;
 	}
 
 	public void save(User user) {
@@ -67,7 +76,14 @@ public class UserService {
 		userUpdate.setDisplayName(updatedUser.getDisplayName());
 		// eger kullanici yeni bir profil fotosu gonderdiyse bunu alalim
 		if (updatedUser.getImage() != null) {
-			userUpdate.setImage(updatedUser.getImage());
+			//userUpdate.setImage(updatedUser.getImage());
+			//base64 ile sifrelenmis olan string degerimizi file formatina donusturen ve dosya ismini donduren fonksiyonumuz olsun
+			try {
+				String storedFileName = fileService.writeBase64EncodedStringToFile(updatedUser.getImage());
+				userUpdate.setImage(storedFileName);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		// save metodu kaydettigi/update ettigi entity'i return eder
 		return userRepository.save(userUpdate);
