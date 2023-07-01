@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -45,7 +46,9 @@ public class User implements UserDetails {
 	@Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).*$", message = "{hoaxify.constraints.password.Pattern.message}")
 	@Size(min = 8, max = 255)
 	private String password;
-
+	
+	//bu alanin 'large object' (Lob) oldugunu belirtelim. File tipi string'e donusturuldugunde boyutu buyuk oldugundan
+	@Lob
 	private String image;
 
 	@Override
