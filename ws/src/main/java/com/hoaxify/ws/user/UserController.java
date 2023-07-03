@@ -79,8 +79,9 @@ public class UserController {
 	// once (@PreAuthorize) calisacak. Bu anotasyon icine yazilan ifade 'Spring Expression Language (SpEL)'
 	//SpEL sayesinde hash (#) ifadesi ile metot parametrelerine erisebiliriz
 	//'username' degeri 'loggedInUser' nesnesinin 'kullaniciAdi' alanina esit degilse spring security 403 forbidden firlatir
+	//@Valid ile 'UserUpdateVM' tipindeki nesnenin kurallara uygun olmasini sagliyoruz. Degilse hata aliriz
 	@PreAuthorize("#username == #loggedInUser.kullaniciAdi")
-	public UserVM updateUser(@PathVariable String username, @RequestBody UserUpdateVM updatedUser, @CurrentUser User loggedInUser) {
+	public UserVM updateUser(@PathVariable String username, @Valid @RequestBody UserUpdateVM updatedUser, @CurrentUser User loggedInUser) {
 		User user = userService.updateUser(username, updatedUser);
 		return new UserVM(user);
 	}
