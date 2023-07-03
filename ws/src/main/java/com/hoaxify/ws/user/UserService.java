@@ -67,7 +67,7 @@ public class UserService {
 		return userInDbUser;
 	}
 
-	// kullanicinin displayName bilgisini guncelleyen metot yazalim
+	// kullanicinin bilgilerini guncelleyen metot yazalim
 	public User updateUser(String username, UserUpdateVM updatedUser) {
 		// once username bilgisinden var olan kullanicimizi bulalim
 		User userUpdate = getByUsername(username);
@@ -76,6 +76,8 @@ public class UserService {
 		userUpdate.setDisplayName(updatedUser.getDisplayName());
 		// eger kullanici yeni bir profil fotosu gonderdiyse bunu alalim
 		if (updatedUser.getImage() != null) {
+			//kullanicinin eski profil fotosunu alalim
+			String oldImageName = userUpdate.getImage();
 			//userUpdate.setImage(updatedUser.getImage());
 			//base64 ile sifrelenmis olan string degerimizi file formatina donusturen ve dosya ismini donduren fonksiyonumuz olsun
 			try {
@@ -84,6 +86,8 @@ public class UserService {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			//aldigimiz eski profil fotosunu silelim
+			fileService.deleteFile(oldImageName);
 		}
 		// save metodu kaydettigi/update ettigi entity'i return eder
 		return userRepository.save(userUpdate);
