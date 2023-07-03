@@ -7,14 +7,22 @@ import java.io.OutputStream;
 import java.util.Base64;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.hoaxify.ws.configuration.AppConfiguration;
 
 @Service
 public class FileService {
+	
+	@Autowired
+	AppConfiguration appConfiguration;
+	
 	// base64 string degerini file tipine donusturen fonksiyon
 	public String writeBase64EncodedStringToFile(String image) throws IOException {
 		String fileName = generateRandomName();
-		File target = new File("picture-storage/" + fileName);
+		File target = new File(appConfiguration.getUploadPath() + "/" + fileName);
 		OutputStream outputStream = new FileOutputStream(target);
 		byte[] base64encoded = Base64.getDecoder().decode(image);
 		outputStream.write(base64encoded);

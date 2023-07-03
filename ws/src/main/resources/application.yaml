@@ -27,8 +27,36 @@ spring:
       pageable:
         page-parameter: pageNumber
         size-parameter: pageSize
+        
+#hangi profilin aktif edilecegini secelim  
+#birden fazla profil aktif edildiginde en son olusturulan (profil listesine en son eklenen DEGIL) profil baz alinir      
+  profiles:
+    active:
+    - dev    
+#kullanici profil fotolarini kaydedecegimiz dosya yolunu belirtelim. Spring tarafinda demistik ki; bu degeri..
+#..'upload-path'den al
+hoaxify:
+  upload-path: picture-storage
 
-#Log seviyesini debug seviyesine cekelim. Yani artiralim
-#logging:
-#  level:
-#    '[org.springframework]': debug
+# *** bu configuration dosyasinda farkli profiller olusturabiliriz ***
+# Profilleri birbirinden ayirmak icin '---' kullanilir
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+hoaxify:
+  upload-path: storage-production
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+hoaxify:
+  upload-path: storage-dev
+
+
+
+
+
+

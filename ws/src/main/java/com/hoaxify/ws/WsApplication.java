@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 import com.hoaxify.ws.user.User;
 import com.hoaxify.ws.user.UserService;
@@ -21,6 +22,7 @@ public class WsApplication {
 	//asagidaki metot uygulama ayaga kalkarken otomatik olarak calisacaktir
 	//'CommandLineRunner' class'i ozel bir classtir. Biz uygulama baslatilirken kullanici olustursun istiyoruz
 	@Bean //bu anotasyon ile bu metodu bir spring context'i yapmis oluyoruz ve artik spring @bean anotasyonuna sagip CommandLineRunner tipindeki metodu gorunce uygulamayi baslatirken bu metodu cagiracak
+	@Profile("dev") //bu metot sadece dev profilinde (application.yaml'deki prfillerden biri) calissin
 	CommandLineRunner createInitialUsers(UserService userService) {
 		System.out.println("@bean anotasyonuna sahip createInitialUsers metodu cagrildi");
 		/*
