@@ -26,10 +26,8 @@ public class UserService {
 	// dependency injection islemini bu anotasyon haricinde constructor metot ile de
 	// yapabiliriz. Ornegi asagida
 	UserRepository userRepository;
-
 	// spring security kullanarak password sifreleme yapacagiz
 	PasswordEncoder passwordEncoder;
-	
 	FileService fileService;
 	
 	// @Autowired eger sinif icinde sadece bir tane constructor varsa 'AutoWired'..
@@ -41,16 +39,14 @@ public class UserService {
 	}
 
 	public void save(User user) {
-		user.setPassword(this.passwordEncoder.encode(user.getPassword())); // bu sekilde encode edilmis bir string
-																			// tekrar decode edilemez
+		// bu sekilde encode edilmis bir string tekrar decode edilemez
+		user.setPassword(this.passwordEncoder.encode(user.getPassword())); 
 		userRepository.save(user);
 	}
 
-	// verileri sayfa sayfa alabilmek icin spring data'nin pageable nesnesini
-	// kullaniyoruz
+	// verileri sayfa sayfa alabilmek icin spring data'nin pageable nesnesini kullaniyoruz
 	public Page<User> getirTumKullanicilar(Pageable page, User user) {
-		// eger loggin olmus kullanici varsa o kullanicinin olmadigi kullanici listesini
-		// donelim
+		// eger loggin olmus kullanici varsa o kullanicinin olmadigi kullanici listesini donelim
 		if (user != null) {
 			return userRepository.findByKullaniciAdiNot(user.getKullaniciAdi(), page);
 		}

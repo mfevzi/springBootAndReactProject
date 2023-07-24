@@ -19,21 +19,19 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-@Data // lombok kutuphanesi sayesinde tanimlanan degiskenlere ait getter setter
-		// fonksiyonlarini bizim yerimizie tanimlanmis olur
+@Data // lombok kutuphanesi sayesinde tanimlanan degiskenlere ait getter setter fonksiyonlarini bizim yerimizie tanimlanmis olur
 @Entity
 @Table(name = "users") // @Table ile databasedeki tablo adını istediğimiz şekilde belirleyebiliriz
 //'UserDetails' interface'si spring security'de gerekli oldugundan implement edildi
 public class User implements UserDetails {
 	private static final long serialVersionUID = 1088472689992904045L;
 
-
 	@Id
 	@GeneratedValue // default hali otomatik olarak id degeri uretir
 	private long id;
-
-	@NotNull(message = "{hoaxify.constraints.username.NotNull.message}") // kendimiz biz key olusturduk ve buna ozel
-																			// validation mesaji gosterecegiz
+	
+	// kendimiz biz key olusturduk ve buna ozel validation mesaji gosterecegiz
+	@NotNull(message = "{hoaxify.constraints.username.NotNull.message}") 
 	@Size(min = 4, max = 255)
 	@UniqueUsername
 	private String kullaniciAdi;

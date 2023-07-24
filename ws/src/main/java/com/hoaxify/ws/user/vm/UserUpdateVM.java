@@ -1,6 +1,8 @@
 package com.hoaxify.ws.user.vm;
 
 
+import com.hoaxify.ws.shared.FileType;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -16,5 +18,8 @@ public class UserUpdateVM {
 	@NotNull
 	@Size(min = 4, max = 15)
 	private String displayName;
+	
+	//hangi turde iamge'lerin gecerli oldugunu tanimlayalim
+	@FileType(types = { "jpeg", "png" })
 	private String image;
 }
