@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
@@ -27,7 +28,7 @@ public class User implements UserDetails {
 	private static final long serialVersionUID = 1088472689992904045L;
 
 	@Id
-	@GeneratedValue // default hali otomatik olarak id degeri uretir
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // default hali otomatik olarak id degeri uretir
 	private long id;
 	
 	// kendimiz biz key olusturduk ve buna ozel validation mesaji gosterecegiz

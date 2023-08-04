@@ -30,6 +30,8 @@ public class SecurityConfiguration {
 		.requestMatchers(HttpMethod.POST, "/api/auth").authenticated()
 		//bu request'i gondermeye yetkili mi kullanici diye sorguluyoruz
 		.requestMatchers(HttpMethod.PUT, "/api/users/{username}").authenticated()
+		//kullanici login olmadan hoax post edemesin
+		.requestMatchers(HttpMethod.POST, "/api/hoaxes").authenticated()
 		.and()
 		.authorizeHttpRequests().anyRequest().permitAll(); //yukaridaki requestlerin haricindekilere izin veriyoruz. Herhangi bir kontrole sokmuyoruz
 		

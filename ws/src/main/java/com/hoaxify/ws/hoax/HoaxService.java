@@ -6,6 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.hoaxify.ws.user.User;
+
+import jakarta.validation.Valid;
+
 @Service
 public class HoaxService {
 	
@@ -15,7 +19,8 @@ public class HoaxService {
 		this.hoaxRepository = hoaxRepository;
 	}
 
-	public void save(Hoax hoax) {
+	public void save(Hoax hoax, User user) {
+		hoax.setUser(user);
 		hoax.setTimestamp(new Date());
 		hoaxRepository.save(hoax);
 	}

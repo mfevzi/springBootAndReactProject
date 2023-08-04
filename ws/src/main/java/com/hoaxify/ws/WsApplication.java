@@ -45,13 +45,12 @@ public class WsApplication {
 				user.setDisplayName("Display"+i);
 				user.setPassword("P4ssword");
 				userService.save(user);
-			}
-			
-			//test verisi icin uygulama ayaga kalkarken hoaxlar olusturalim
-			for(int i = 1; i < 51; i++) {
-				Hoax hoax = new Hoax();
-				hoax.setContent("Hoax " + i);
-				hoaxService.save(hoax);
+				//her kullanici baslangicta iki tane hoaxa sahip olsun
+				for(int j = 1; j < 3; j++) {
+					Hoax hoax = new Hoax();
+					hoax.setContent("Hoax " + j + " from user " + i);
+					hoaxService.save(hoax, user);
+				}
 			}
 		};
 	}
