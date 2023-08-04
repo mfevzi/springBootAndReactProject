@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
+import com.hoaxify.ws.hoax.Hoax;
+import com.hoaxify.ws.hoax.HoaxService;
 import com.hoaxify.ws.user.User;
 import com.hoaxify.ws.user.UserService;
 
@@ -23,7 +25,7 @@ public class WsApplication {
 	//'CommandLineRunner' class'i ozel bir classtir. Biz uygulama baslatilirken kullanici olustursun istiyoruz
 	@Bean //bu anotasyon ile bu metodu bir spring context'i yapmis oluyoruz ve artik spring @bean anotasyonuna sagip CommandLineRunner tipindeki metodu gorunce uygulamayi baslatirken bu metodu cagiracak
 	@Profile("dev") //bu metot sadece dev profilinde (application.yaml'deki prfillerden biri) calissin
-	CommandLineRunner createInitialUsers(UserService userService) {
+	CommandLineRunner createInitialUsers(UserService userService, HoaxService hoaxService) {
 		System.out.println("@bean anotasyonuna sahip createInitialUsers metodu cagrildi");
 		/*
 		 * return new CommandLineRunner() {
@@ -43,6 +45,13 @@ public class WsApplication {
 				user.setDisplayName("Display"+i);
 				user.setPassword("P4ssword");
 				userService.save(user);
+			}
+			
+			//test verisi icin uygulama ayaga kalkarken hoaxlar olusturalim
+			for(int i = 1; i < 51; i++) {
+				Hoax hoax = new Hoax();
+				hoax.setContent("Hoax " + i);
+				hoaxService.save(hoax);
 			}
 		};
 	}

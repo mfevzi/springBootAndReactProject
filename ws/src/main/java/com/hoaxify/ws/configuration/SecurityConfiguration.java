@@ -16,10 +16,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled=true) //@PreAuthorize kullanimi icin ekledik (spring security)
 public class SecurityConfiguration {
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable();
 		http.httpBasic().authenticationEntryPoint(new AuthEntryPoint());
+		
+		//spring security'den dolayi h2 vt'ye baglanma problemini onlemek icin
+		http.headers().frameOptions().disable();
 		
 		//'/api/auth'ya gelen requestler authenticated olmali yani icinde gerekli parametreleri barindirmali
 		http
@@ -34,8 +37,8 @@ public class SecurityConfiguration {
 		return http.build();
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
+    @Bean
+    PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 }
