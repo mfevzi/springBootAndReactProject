@@ -53,14 +53,16 @@ public class HoaxController {
 	//@requestParam ile opsiyonel olarak request parametresi alalim. Opsiyonel oldugu 'required' ifadesinden gelir
 	//eger elimizdeki hoax'tan sonra yeni hoax'lar gelmis ise count degeri true olsun
 	//donus tipi degisken oldugundan 'ResponseEntity' kullandik
-	@GetMapping("/hoaxes/{id:[0-9]+}")
+	//birden fazla path tanimlamak mumkun. Bunun icin suslu parantez ve virgul kullaniyoruz
+	@GetMapping({"/hoaxes/{id:[0-9]+}", "users/{username}/hoaxes/{id:[0-9]+}"})
 	ResponseEntity<?> getHoaxesRelative(@PathVariable Long id, 
 			@PageableDefault(sort = "id", direction = Direction.DESC) Pageable page,
+			@PathVariable(required = false) String username,
 			@RequestParam(name = "count", required = false, defaultValue = "false") boolean count,
 			@RequestParam(name = "direction", defaultValue = "before") String direction) {
 		//eger count degeri varsa
 		if(count) {
-			long newHoaxCount = hoaxService.getNewHoaxCount(id);
+			long newHoaxCount = hoaxService.getNewHoaxCount(id, username);
 			//count key'ine sahip bir json olusturalim
 			Map<String, Long> response = new HashMap<>();
 			response.put("count", newHoaxCount);
@@ -71,12 +73,12 @@ public class HoaxController {
 		if (direction.equals("after")) {
 			// listenin yeniden eskiye gore siralanmasini istedigimizde 'page.getSort()' verdik
 			//hoax turunde donen cevabi hoaxVM turunde listeye donusturmek icin java 8 stream kullandik
-			List<HoaxVM> newHoaxs = hoaxService.getNewHoaxes(id, page.getSort())
+			List<HoaxVM> newHoaxs = hoaxService.getNewHoaxes(id, username, page.getSort())
 					.stream().map(HoaxVM::new).collect(Collectors.toList());
 			return ResponseEntity.ok(newHoaxs);
 		}
 		//donus tipimiz degisken oldugundan
-		return ResponseEntity.ok(hoaxService.getOldHoaxes(id, page).map(HoaxVM::new));
+		return ResponseEntity.ok(hoaxService.getOldHoaxes(id, username, page).map(HoaxVM::new));
 	}
 	
 	@GetMapping("users/{username}/hoaxes")
@@ -88,28 +90,29 @@ public class HoaxController {
 	//count true ise verilen hoax id'ye gore kullaniciya ait yeni hoaxlarin sayisini dondurecegiz
 	//count false ise verilen hoax id'den daha eski olan kullanici hoaxlarini getirecegiz
 	//donus tipi degisken oldugundan 'response entity' kullaniyoruz
-	@GetMapping("users/{username}/hoaxes/{id:[0-9]+}")
-	ResponseEntity<?> getUserHoaxesRelative(@PathVariable Long id, 
-			@PathVariable String username, @PageableDefault(sort = "id", direction = Direction.DESC) Pageable page,
-			@RequestParam(name = "count", required = false, defaultValue = "false") boolean count,
-			@RequestParam(name = "direction", defaultValue = "before") String direction) {
-		// eger count degeri varsa
-		if (count) {
-			long newHoaxCount = hoaxService.getNewHoaxOfUserCount(id, username);
-			// count key'ine sahip bir json olusturalim
-			Map<String, Long> response = new HashMap<>();
-			response.put("count", newHoaxCount);
-			// donus tipimiz degisken oldugundan
-			return ResponseEntity.ok(response);
-		}
-		// direction parametresi 'after' ise
-		if (direction.equals("after")) {
-			// listenin yeniden eskiye gore siralanmasini istedigimizde 'page.getSort()' verdik
-			// hoax turunde donen cevabi hoaxVM turunde listeye donusturmek icin java 8 stream kullandik
-			List<HoaxVM> newHoaxs = hoaxService.getNewHoaxesOfUser(id, username, page.getSort()).stream().map(HoaxVM::new)
-					.collect(Collectors.toList());
-			return ResponseEntity.ok(newHoaxs);
-		}
-		return ResponseEntity.ok(hoaxService.getOldHoaxesOfUser(id, username, page).map(HoaxVM::new));
-	}
+	/*
+	 * @GetMapping("users/{username}/hoaxes/{id:[0-9]+}") ResponseEntity<?>
+	 * getUserHoaxesRelative(@PathVariable Long id,
+	 * 
+	 * @PathVariable String username, @PageableDefault(sort = "id", direction =
+	 * Direction.DESC) Pageable page,
+	 * 
+	 * @RequestParam(name = "count", required = false, defaultValue = "false")
+	 * boolean count,
+	 * 
+	 * @RequestParam(name = "direction", defaultValue = "before") String direction)
+	 * { // eger count degeri varsa if (count) { long newHoaxCount =
+	 * hoaxService.getNewHoaxOfUserCount(id, username); // count key'ine sahip bir
+	 * json olusturalim Map<String, Long> response = new HashMap<>();
+	 * response.put("count", newHoaxCount); // donus tipimiz degisken oldugundan
+	 * return ResponseEntity.ok(response); } // direction parametresi 'after' ise if
+	 * (direction.equals("after")) { // listenin yeniden eskiye gore siralanmasini
+	 * istedigimizde 'page.getSort()' verdik // hoax turunde donen cevabi hoaxVM
+	 * turunde listeye donusturmek icin java 8 stream kullandik List<HoaxVM>
+	 * newHoaxs = hoaxService.getNewHoaxesOfUser(id, username,
+	 * page.getSort()).stream().map(HoaxVM::new) .collect(Collectors.toList());
+	 * return ResponseEntity.ok(newHoaxs); } return
+	 * ResponseEntity.ok(hoaxService.getOldHoaxesOfUser(id, username,
+	 * page).map(HoaxVM::new)); }
+	 */
 }
