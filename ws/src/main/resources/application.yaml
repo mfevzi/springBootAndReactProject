@@ -33,6 +33,12 @@ spring:
   profiles:
     active:
     - dev    
+    
+# multipart file save ederken default max degeri (1MB) degistirelim
+  servlet:
+    multipart:
+      max-file-size: 10MB
+        
 #kullanici profil fotolarini kaydedecegimiz dosya yolunu belirtelim. Spring tarafinda demistik ki; bu degeri..
 #..'upload-path'den al
 hoaxify:

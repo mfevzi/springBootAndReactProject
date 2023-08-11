@@ -32,6 +32,8 @@ public class SecurityConfiguration {
 		.requestMatchers(HttpMethod.PUT, "/api/users/{username}").authenticated()
 		//kullanici login olmadan hoax post edemesin
 		.requestMatchers(HttpMethod.POST, "/api/hoaxes").authenticated()
+		//kullanici login olmadan file upload edemesin
+		.requestMatchers(HttpMethod.POST, "/api/hoax-attachments").authenticated()
 		.and()
 		.authorizeHttpRequests().anyRequest().permitAll(); //yukaridaki requestlerin haricindekilere izin veriyoruz. Herhangi bir kontrole sokmuyoruz
 		
