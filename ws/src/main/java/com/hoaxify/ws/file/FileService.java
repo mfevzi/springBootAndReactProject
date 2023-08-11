@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Date;
@@ -40,7 +41,7 @@ public class FileService {
 	// base64 string degerini file tipine donusturen fonksiyon
 	public String writeBase64EncodedStringToFile(String image) throws IOException {
 		String fileName = generateRandomName();
-		File target = new File(appConfiguration.getUploadPath() + "/" + fileName);
+		File target = new File(appConfiguration.getProfileStoragePath() + "/" + fileName);
 		OutputStream outputStream = new FileOutputStream(target);
 		byte[] base64encoded = Base64.getDecoder().decode(image);
 		outputStream.write(base64encoded);
@@ -57,40 +58,56 @@ public class FileService {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
-	public void deleteFile(String oldImageName) {
+	public void deleteProfileImage(String oldImageName) {
 		if (oldImageName == null) {
 			return;
 		}
-		// Files class'inin silme metodunu kullanalim
+		deleteFile(Paths.get(appConfiguration.getProfileStoragePath(), oldImageName));
+	}
+	
+	public void deleteAttachmentFile(String oldImageName) {
+		if (oldImageName == null) {
+			return;
+		}
+		deleteFile(Paths.get(appConfiguration.getAttachmentStoragePath(), oldImageName));
+	}
+	
+	private void deleteFile(Path path) {
 		try {
-			Files.deleteIfExists(Paths.get(appConfiguration.getUploadPath(), oldImageName));
+			Files.deleteIfExists(path);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
-	public String detectType(String value) {
-		//base64 encode seklindeki string veriyi (image file) decode edelim
-		byte[] base64encoded = Base64.getDecoder().decode(value);
+	public String detectType(byte[] arr) {
 		//byte tipindeki verinin dosya tipini bulalim. Burada 'Tika' sinifininin hazir metodunu kullaniyoruz
-		String fileType = tika.detect(base64encoded);
-		return fileType;
+		return tika.detect(arr);
+	}
+	
+	public String detectType(String base64) {
+		byte[] base64encoded = Base64.getDecoder().decode(base64);
+		return detectType(base64encoded);
 	}
 
 	public FileAttachment saveHoaxAttachment(MultipartFile multipartFile) {
 		String fileName = generateRandomName();
-		File target = new File(appConfiguration.getUploadPath() + "/" + fileName);
+		File target = new File(appConfiguration.getAttachmentStoragePath() + "/" + fileName);
+		String fileType = null;
 		try {
+			byte[] arr = multipartFile.getBytes();
 			OutputStream outputStream = new FileOutputStream(target);
-			outputStream.write(multipartFile.getBytes());
+			outputStream.write(arr);
 			outputStream.close();
+			// file type alalim
+			fileType = detectType(arr);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		FileAttachment attachment = new FileAttachment();
 		attachment.setName(fileName);
 		attachment.setDate(new Date());
+		attachment.setFileType(fileType);
 		return fileAttachmentRepository.save(attachment);
 		
 	}
@@ -109,15 +126,15 @@ public class FileService {
 		// yapalim
 		for (FileAttachment file : filesToBeDeleted) {
 			// delete file from directory
-			deleteFile(file.getName());
+			deleteAttachmentFile(file.getName());
 			// delete from database
 			fileAttachmentRepository.deleteById(file.getId());
 		}
 	}
 
 	// scheduled metot test
-	@Scheduled(fixedRate = 5 * 1000)
-	public void test() {
-		System.out.println("Askin olayim Icardi");
-	}
+	/*
+	 * @Scheduled(fixedRate = 5 * 1000) public void test() {
+	 * System.out.println("Askin olayim Icardi"); }
+	 */
 }

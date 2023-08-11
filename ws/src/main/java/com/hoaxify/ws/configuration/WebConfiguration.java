@@ -37,15 +37,21 @@ public class WebConfiguration implements WebMvcConfigurer {
 	@Bean
 	CommandLineRunner createStorageDirectories() {
 		return (args) -> {
-			// path degerini application.yaml'den alacak klasor olusturalim
-			File folder = new File(appConfiguration.getUploadPath());
-			// boyle bir klasorun zaten var olup olmadigini ve bunun bir dosya degil klasor
-			// olup olmadigini kontrol edelim
-			boolean folderExist = folder.exists() && folder.isDirectory();
-			// eger sartlar uygunsa bu klasoru olusturalim
-			if (!folderExist) {
-				folder.mkdir();
-			}
+			createFolder(appConfiguration.getUploadPath());
+			createFolder(appConfiguration.getProfileStoragePath());
+			createFolder(appConfiguration.getAttachmentStoragePath());
 		};
+	}
+
+	private void createFolder(String path) {
+		// path degerini application.yaml'den alacak klasor olusturalim
+		File folder = new File(path);
+		// boyle bir klasorun zaten var olup olmadigini ve bunun bir dosya degil klasor
+		// olup olmadigini kontrol edelim
+		boolean folderExist = folder.exists() && folder.isDirectory();
+		// eger sartlar uygunsa bu klasoru olusturalim
+		if (!folderExist) {
+			folder.mkdir();
+		}
 	}
 }

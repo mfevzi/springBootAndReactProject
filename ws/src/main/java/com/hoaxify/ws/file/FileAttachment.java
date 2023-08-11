@@ -25,6 +25,8 @@ public class FileAttachment {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	
+	private String fileType;
+	
 	// bu attachment'in hangi hoax ile iliskili oldugu bilgisi
 	// bir hoax bir tane file ile iliskili olabilir
 	@OneToOne

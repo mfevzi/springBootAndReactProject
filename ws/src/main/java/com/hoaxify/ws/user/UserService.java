@@ -83,7 +83,7 @@ public class UserService {
 				e.printStackTrace();
 			}
 			//aldigimiz eski profil fotosunu silelim
-			fileService.deleteFile(oldImageName);
+			fileService.deleteProfileImage(oldImageName);
 		}
 		// save metodu kaydettigi/update ettigi entity'i return eder
 		return userRepository.save(userUpdate);

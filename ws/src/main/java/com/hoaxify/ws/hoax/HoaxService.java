@@ -2,6 +2,7 @@ package com.hoaxify.ws.hoax;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
+import com.hoaxify.ws.file.FileAttachment;
+import com.hoaxify.ws.file.FileAttachmentRepository;
+import com.hoaxify.ws.hoax.vm.HoaxSubmitVM;
 import com.hoaxify.ws.user.User;
 import com.hoaxify.ws.user.UserRepository;
 import com.hoaxify.ws.user.UserService;
@@ -26,16 +30,33 @@ public class HoaxService {
 	
 	HoaxRepository hoaxRepository;
 	UserService userService;
+	FileAttachmentRepository fileAttachmentRepository;
 
-	public HoaxService(HoaxRepository hoaxRepository, UserService userService) {
+	public HoaxService(HoaxRepository hoaxRepository, UserService userService, 
+			FileAttachmentRepository fileAttachmentRepository) {
 		this.hoaxRepository = hoaxRepository;
 		this.userService = userService;
+		this.fileAttachmentRepository = fileAttachmentRepository;
 	}
 
-	public void save(Hoax hoax, User user) {
+	public void save(HoaxSubmitVM hoaxSubmitVM, User user) {
+		Hoax hoax = new Hoax();
+		hoax.setContent(hoaxSubmitVM.getContent());
 		hoax.setUser(user);
 		hoax.setTimestamp(new Date());
 		hoaxRepository.save(hoax);
+		
+		// hoax kaydetme isleminin ardindan eger hoax bir file attachment iceriyorsa..
+		// ..o file'i bulup hoax ile iliskili oldugu alani guncelleyelim
+		Optional<FileAttachment> optionalFileAttachment = fileAttachmentRepository.findById(hoaxSubmitVM.getAttachmentId());
+		// database'de boyle bir dosya varsa (isPresent)
+		if(optionalFileAttachment.isPresent()) {
+			// fileAttachment objesini al
+			FileAttachment fileAttachment = optionalFileAttachment.get();
+			// objenin hoax field'ini guncelle/doldur
+			fileAttachment.setHoax(hoax);
+			fileAttachmentRepository.save(fileAttachment);
+		}
 	}
 
 	public Page<Hoax> getHoaxes(Pageable page) {

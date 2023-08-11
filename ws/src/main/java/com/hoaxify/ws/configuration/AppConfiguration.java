@@ -12,4 +12,16 @@ import lombok.Data;
 public class AppConfiguration {
 	//asagida camelCase olarak 'uploadPath' seklinde yazilan degisken application.yaml dosyasindaki 'upload-path' ifadeye karsilik gelir
 	private String uploadPath;
+	
+	private String profileStorage = "profile";
+	
+	private String attachmentStorage = "attachment";
+	
+	public String getProfileStoragePath() {
+		return uploadPath + "/" + profileStorage;
+	}
+	
+	public String getAttachmentStoragePath() {
+		return uploadPath + "/" + attachmentStorage;
+	}
 }
