@@ -14,11 +14,14 @@ import org.springframework.stereotype.Service;
 
 import com.hoaxify.ws.file.FileAttachment;
 import com.hoaxify.ws.file.FileAttachmentRepository;
+import com.hoaxify.ws.file.FileService;
 import com.hoaxify.ws.hoax.vm.HoaxSubmitVM;
 import com.hoaxify.ws.user.User;
 import com.hoaxify.ws.user.UserRepository;
 import com.hoaxify.ws.user.UserService;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -31,12 +34,14 @@ public class HoaxService {
 	HoaxRepository hoaxRepository;
 	UserService userService;
 	FileAttachmentRepository fileAttachmentRepository;
+	FileService fileService;
 
 	public HoaxService(HoaxRepository hoaxRepository, UserService userService, 
-			FileAttachmentRepository fileAttachmentRepository) {
+			FileAttachmentRepository fileAttachmentRepository, FileService fileService) {
 		this.hoaxRepository = hoaxRepository;
 		this.userService = userService;
 		this.fileAttachmentRepository = fileAttachmentRepository;
+		this.fileService = fileService;
 	}
 
 	public void save(HoaxSubmitVM hoaxSubmitVM, User user) {
@@ -134,9 +139,33 @@ public class HoaxService {
 	}
 
 	public void deleteHoax(long id) {
+		// eger silmek istedigimiz bir hoax attachment'a sahipse (OneToOne) ..
+		// ..once bu attachment'i silelim ardindan hoax'i silelim.
+		Optional<Hoax> inDb = hoaxRepository.findById(id);
+		Hoax hoax = inDb.get();
+		if(hoax.getFileAttachment() != null) {
+			String fileName = hoax.getFileAttachment().getName();
+			fileService.deleteAttachmentFile(fileName);
+		}
 		hoaxRepository.deleteById(id);
+		
+		// NOT: bu sekilde bagli iliskilerde entity uzerindeki konfiguraasyon ile de..
+		// ..silme islemi yapilabilir. Bunun icin 'orphanRemoval = true'..
+		// ..(@OneToOne(mappedBy = "hoax", orphanRemoval = true)) veya ..
+		// ..'cascade = CascadeType.REMOVE' (@OneToOne(mappedBy = "hoax", cascade = CascadeType.REMOVE))..
+		// ..ayari da yapilabilirdi.
 	}
 	
+	// bir user'a ait hoax listesini silen metot
+	public void deleteHoaxesOfUser(String username) {
+		User inDb = userService.getByUsername(username);
+		// user'i bu user olan hoax'lari getirelim
+		Specification<Hoax> userOwned = userIs(inDb);
+		// specification ile olusturdugumuz query'i calistirip hoax'lari listeye atalim
+		List<Hoax> hoaxesToBeRemoved = hoaxRepository.findAll(userOwned);
+		// listedeki hoax'lari silelim
+		hoaxRepository.deleteAll(hoaxesToBeRemoved);
+	}
 	
 	
 }

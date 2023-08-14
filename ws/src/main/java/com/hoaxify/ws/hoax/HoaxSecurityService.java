@@ -21,6 +21,8 @@ public class HoaxSecurityService {
 	HoaxRepository hoaxRepository;
 	
 	public boolean isAllowedToDelete(long id, User loggedInUser) {
+		// simdilik asagidaki kodu iptal edelim ve current user'a gore islem yapilmasin
+		/*
 		// id degerinden yola cikarak hoax'i bulalim
 		Optional<Hoax> optionalHoax = hoaxRepository.findById(id);
 		// eger boyle bir hoax yoksa
@@ -33,6 +35,8 @@ public class HoaxSecurityService {
 		if (hoax.getUser().getId() != loggedInUser.getId()) {
 			return false;
 		}
+		return true;
+		*/
 		return true;
 	}
 }

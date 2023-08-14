@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.util.Base64;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.hoaxify.ws.error.NotFoundException;
 import com.hoaxify.ws.file.FileService;
+import com.hoaxify.ws.hoax.HoaxService;
 import com.hoaxify.ws.user.vm.UserUpdateVM;
 
 @Service
@@ -29,13 +32,16 @@ public class UserService {
 	// spring security kullanarak password sifreleme yapacagiz
 	PasswordEncoder passwordEncoder;
 	FileService fileService;
+	HoaxService hoaxService;
 	
 	// @Autowired eger sinif icinde sadece bir tane constructor varsa 'AutoWired'..
 	// ..anotasyonuna ihtiyac duyulmaz. Koysak da olur
-	public UserService(UserRepository userRepository, FileService fileService) {
+	// 'Circular Dependency' hatasindan kurtulmak icin 'HoaxService'i '@Lazy' anotasyonu ile inject ettik
+	public UserService(UserRepository userRepository, FileService fileService, @Lazy HoaxService hoaxService) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = new BCryptPasswordEncoder();
 		this.fileService = fileService;
+		this.hoaxService = hoaxService;
 	}
 
 	public void save(User user) {
@@ -87,6 +93,13 @@ public class UserService {
 		}
 		// save metodu kaydettigi/update ettigi entity'i return eder
 		return userRepository.save(userUpdate);
+	}
+
+	public void deleteUser(String username) {
+		// user'i silmeden once constraint'e takilmamak icin user'in hoax'larini silelim
+		hoaxService.deleteHoaxesOfUser(username);
+		User inDb = userRepository.findByKullaniciAdi(username);
+		userRepository.delete(inDb);
 	}
 
 }

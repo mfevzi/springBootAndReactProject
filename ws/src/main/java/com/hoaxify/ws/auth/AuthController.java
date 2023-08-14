@@ -17,7 +17,6 @@ public class AuthController {
 	
 	@PostMapping("/api/auth")
 	UserVM handleAuthentication(@CurrentUser User user) { //bizim yazdigimiz anotasyon ile object cast islemi yapilacak
-		
 		return new UserVM(user);
 	}
 }

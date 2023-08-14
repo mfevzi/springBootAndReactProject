@@ -5,6 +5,7 @@ import java.util.Date;
 import com.hoaxify.ws.file.FileAttachment;
 import com.hoaxify.ws.user.User;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
