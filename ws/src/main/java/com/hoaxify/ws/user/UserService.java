@@ -98,8 +98,7 @@ public class UserService {
 	public void deleteUser(String username) {
 		// user'i silmeden once constraint'e takilmamak icin user'in hoax'larini silelim
 		hoaxService.deleteHoaxesOfUser(username);
-		User inDb = userRepository.findByKullaniciAdi(username);
-		userRepository.delete(inDb);
+		userRepository.deleteByKullaniciAdi(username);
 	}
 
 }
