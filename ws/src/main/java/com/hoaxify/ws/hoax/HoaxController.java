@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -119,7 +120,12 @@ public class HoaxController {
 	 */
 	
 	@DeleteMapping("/hoaxes/{id:[0-9]+}")
-	GenericResponse deleteHoax(@PathVariable long id) {
+	// hoax'in silinebilirligini kontrol eden servis sinifimizi cagirip kontrolden gecirelim
+	// 'HoaxSecurityService' class'inin basina '@' koyarak ve camelCase olarak yazarak..
+	// .. spring'e diyoruz ki senin boyle bir bean'in var. Bu bean'nin 'isAllowedToDelete' isimli..
+	// .. isimli metodunu calistirir. Metot parametrelerini ise '#' yardimi ile metoda gonderiyoruz
+	@PreAuthorize("@hoaxSecurityService.isAllowedToDelete(#id, #loggedInUser)")
+	GenericResponse deleteHoax(@PathVariable long id, @CurrentUser User loggedInUser) {
 		hoaxService.deleteHoax(id);
 		return new GenericResponse("Hoax removed");
 	}
