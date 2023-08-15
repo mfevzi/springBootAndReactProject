@@ -1,5 +1,8 @@
 package com.hoaxify.ws.auth;
 
+import java.util.Optional;
+
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -8,8 +11,14 @@ import com.hoaxify.ws.user.UserRepository;
 import com.hoaxify.ws.user.UserService;
 import com.hoaxify.ws.user.vm.UserVM;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class AuthService {
@@ -51,6 +60,27 @@ public class AuthService {
 		response.setUser(userVM);
 		response.setToken(token);
 		return response;
+	}
+	
+	@Transactional // buraya bir request geldiginde transaction baslatilsin ve..
+	// ..request sonlanana kadar transaction acik kalsin
+	public UserDetails getUserDetails(String token) {
+		// token'i parse edip icinden user id'yi bulalim. Hatirla, token..
+		// ..uretirken icine user id koyuyorduk
+		JwtParser parser = Jwts.parser().setSigningKey("my-app-secret");
+		// exception firlatilmiyorsa o zaman token valid'tir
+		try {
+			parser.parse(token);
+			Claims claims = parser.parseClaimsJws(token).getBody();
+			// claims icinden de verdigimiz subject'i (user id) alabiliyoruz
+			long userId = Long.parseLong(claims.getSubject());
+			Optional<User> userOptional = userRepository.findById(userId);
+			User user = userOptional.get();
+			return user;
+		} catch (Exception e) {
+			System.out.println("Err: " + e);
+		}
+		return null;
 	}
 
 }
