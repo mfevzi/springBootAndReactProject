@@ -40,17 +40,24 @@ public class WsApplication {
 		//bir interface'nin sadece bir tane metodu varsa arrow function kullanabiliriz
 		//'CommandLineRunner' class'inin run metodunu lambda function olarak kullandik
 		return (args) -> {
-			for(int i = 1; i < 31; i++) {
-				User user = new User();
-				user.setKullaniciAdi("User"+i);
-				user.setDisplayName("Display"+i);
-				user.setPassword("P4ssword");
-				userService.save(user);
-				//her kullanici baslangicta iki tane hoaxa sahip olsun
-				for(int j = 1; j < 21; j++) {
-					HoaxSubmitVM hoax = new HoaxSubmitVM();
-					hoax.setContent("Hoax " + j + " from user " + i);
-					hoaxService.save(hoax, user);
+			// asagidaki kullanicilar sadece bir kere olusturulsun diye basit bir cozum..
+			// ..uretelim eger user1 varsa yeni kullanicilar uretilmesin yoksa uretilsin
+			try {
+				// 'getByUsername' metodu user1'i bulamadiginda exception firlatiyor
+				userService.getByUsername("User1");
+			} catch (Exception e) {
+				for (int i = 1; i < 31; i++) {
+					User user = new User();
+					user.setKullaniciAdi("User" + i);
+					user.setDisplayName("Display" + i);
+					user.setPassword("P4ssword");
+					userService.save(user);
+					// her kullanici baslangicta iki tane hoaxa sahip olsun
+					for (int j = 1; j < 21; j++) {
+						HoaxSubmitVM hoax = new HoaxSubmitVM();
+						hoax.setContent("Hoax " + j + " from user " + i);
+						hoaxService.save(hoax, user);
+					}
 				}
 			}
 		};

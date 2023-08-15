@@ -58,6 +58,14 @@ spring:
   config:
     activate:
       on-profile: dev
+  # veritabanimizdaki veriler uygulama acilip kapandiginda kaybolmasin diye..
+  # ..asagidaki ayarlari (datasource ve jpa) yapalim
+  datasource:
+    url: jdbc:h2:./devdb #devdb isimli dosyada bilgiler tutulacak
+    username: sa
+  jpa:
+    hibernate:
+      ddl-auto: update #uygulama baslatilirken veritabaninda sadece ihtiyac duyulan alanlari update et diyoruz 
 hoaxify:
   upload-path: storage-dev
 
