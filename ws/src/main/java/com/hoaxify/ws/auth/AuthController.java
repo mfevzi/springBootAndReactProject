@@ -2,6 +2,7 @@ package com.hoaxify.ws.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hoaxify.ws.shared.CurrentUser;
@@ -13,10 +14,11 @@ import com.hoaxify.ws.user.vm.UserVM;
 public class AuthController {
 	
 	@Autowired
-	UserRepository userRepository;
+	AuthService authService;
 	
 	@PostMapping("/api/auth")
-	UserVM handleAuthentication(@CurrentUser User user) { //bizim yazdigimiz anotasyon ile object cast islemi yapilacak
-		return new UserVM(user);
+	AuthResponse handleAuthentication(@RequestBody Credentials credentials) {
+		System.out.println("Calisti...");
+		return authService.authenticate(credentials);
 	}
 }

@@ -19,7 +19,7 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable();
-		http.httpBasic().authenticationEntryPoint(new AuthEntryPoint());
+		http.exceptionHandling().authenticationEntryPoint(new AuthEntryPoint());
 		
 		//spring security'den dolayi h2 vt'ye baglanma problemini onlemek icin
 		http.headers().frameOptions().disable();
@@ -27,7 +27,6 @@ public class SecurityConfiguration {
 		//'/api/auth'ya gelen requestler authenticated olmali yani icinde gerekli parametreleri barindirmali
 		http
 		.authorizeHttpRequests()
-		.requestMatchers(HttpMethod.POST, "/api/auth").authenticated()
 		//bu request'i gondermeye yetkili mi kullanici diye sorguluyoruz
 		.requestMatchers(HttpMethod.PUT, "/api/users/{username}").authenticated()
 		//kullanici login olmadan hoax post edemesin
