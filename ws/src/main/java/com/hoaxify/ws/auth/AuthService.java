@@ -1,6 +1,7 @@
 package com.hoaxify.ws.auth;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,13 +12,6 @@ import com.hoaxify.ws.user.UserRepository;
 import com.hoaxify.ws.user.UserService;
 import com.hoaxify.ws.user.vm.UserVM;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -25,11 +19,13 @@ public class AuthService {
 	
 	UserRepository userRepository;
 	PasswordEncoder passwordEncoder;
+	TokenRepository tokenRepository;
 
-	public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+	public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository) {
 		super();
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.tokenRepository = tokenRepository;
 	}
 
 	public AuthResponse authenticate(Credentials credentials) {
@@ -47,15 +43,13 @@ public class AuthService {
 		}
 		// eger eslesiyorsa 'AuthResponse' donelim. Bunun icin userVM ve token'a ihtiyac var
 		UserVM userVM = new UserVM(inDb);
-		// 'setSubject' icindeki deger herhangi bir sey olabilir. Biz user id
-		// kullandik..
-		// ..String deger olsun diye '("" + inDb.getId())' kullanimina gittik.
-		// ele alinan degerin hangi algoritmayla ve bizim uygulamamiza ozel imza ile..
-		// ..saklanmasi icin 'SignatureAlgorithm.HS512' algoritmasini ve 'my-app-secret'
-		// ifadesini kullandik..
-		// ..buradaki 'my-app-secret' key'inin sakli tutulmasi gerekir.
-		String token = Jwts.builder().setSubject("" + inDb.getId()).signWith(SignatureAlgorithm.HS512, "my-app-secret")
-				.compact();
+		String token = generateRandomToken();
+		// token'i db'ye kaydedelim
+		Token tokenEntity = new Token();
+		tokenEntity.setToken(token);
+		tokenEntity.setUser(inDb);
+		tokenRepository.save(tokenEntity);
+		
 		AuthResponse response = new AuthResponse();
 		response.setUser(userVM);
 		response.setToken(token);
@@ -65,6 +59,15 @@ public class AuthService {
 	@Transactional // buraya bir request geldiginde transaction baslatilsin ve..
 	// ..request sonlanana kadar transaction acik kalsin
 	public UserDetails getUserDetails(String token) {
+		Optional<Token> optionalToken = tokenRepository.findById(token);
+		// eger boyle bir token yoksa null donelim
+		if(!optionalToken.isPresent()) {
+			return null;
+		}
+		// token mevcutsa ilgili token'in user'ini donelim
+		return optionalToken.get().getUser();
+		
+		/*
 		// token'i parse edip icinden user id'yi bulalim. Hatirla, token..
 		// ..uretirken icine user id koyuyorduk
 		JwtParser parser = Jwts.parser().setSigningKey("my-app-secret");
@@ -81,6 +84,12 @@ public class AuthService {
 			System.out.println("Err: " + e);
 		}
 		return null;
+		*/
+	}
+	
+	// kendimiz token uretelim
+	public String generateRandomToken() {
+		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 }

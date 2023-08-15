@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hoaxify.ws.auth.Token;
 import com.hoaxify.ws.hoax.Hoax;
 
 import jakarta.persistence.CascadeType;
@@ -59,6 +60,10 @@ public class User implements UserDetails {
 	// user'i sildigimizde ona ait olan hoax'larda silinecek (cascade = CascadeType.REMOVE).
 	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE) 
 	private List<Hoax> hoaxesHoaxs;
+	
+	// bir kullanicinin birden fazla token'i olabilir
+	@OneToMany(mappedBy = "user")
+	private List<Token> tokens;
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
