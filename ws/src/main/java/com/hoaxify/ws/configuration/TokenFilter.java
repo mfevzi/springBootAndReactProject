@@ -39,11 +39,15 @@ public class TokenFilter extends OncePerRequestFilter{
 			
 			// token'dan yola cikarak userDetail elde ediyoruz
 			UserDetails user = authService.getUserDetails(token);
-			// elimizdeki user ile spring security'i biraraya getirelim
-			UsernamePasswordAuthenticationToken authenticationToken = new 
-					UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-			authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+			// eger user objesi bos degilse user ile spring security'i baglayalim
+			if (user != null) {
+				// elimizdeki user ile spring security'i biraraya getirelim
+				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user,
+						null, user.getAuthorities());
+				authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+			}
+			
 		}
 		
 		filterChain.doFilter(request, response);

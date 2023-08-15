@@ -62,7 +62,7 @@ public class User implements UserDetails {
 	private List<Hoax> hoaxesHoaxs;
 	
 	// bir kullanicinin birden fazla token'i olabilir
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE) 
 	private List<Token> tokens;
 	
 	@Override
