@@ -1,6 +1,7 @@
 package com.hoaxify.ws.user;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -8,12 +9,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.hoaxify.ws.hoax.Hoax;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -49,7 +53,13 @@ public class User implements UserDetails {
 	//bu alanin 'large object' (Lob) oldugunu belirtelim. File tipi string'e donusturuldugunde boyutu buyuk oldugundan
 	//@Lob
 	private String image;
-
+	
+	// bir user'in birden fazla hoax'i olabilir. Gerekli iliskiyi kuralim
+	// (mappedBy = "user") Hoax tablosundaki 'user' alani bu iliskideki foreign key'dir anlami tasir
+	// user'i sildigimizde ona ait olan hoax'larda silinecek (cascade = CascadeType.REMOVE).
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE) 
+	private List<Hoax> hoaxesHoaxs;
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return AuthorityUtils.createAuthorityList("Role_user");

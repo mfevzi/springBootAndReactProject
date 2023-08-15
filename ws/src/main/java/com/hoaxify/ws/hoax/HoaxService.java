@@ -156,16 +156,5 @@ public class HoaxService {
 		// ..ayari da yapilabilirdi.
 	}
 	
-	// bir user'a ait hoax listesini silen metot
-	public void deleteHoaxesOfUser(String username) {
-		User inDb = userService.getByUsername(username);
-		// user'i bu user olan hoax'lari getirelim
-		Specification<Hoax> userOwned = userIs(inDb);
-		// specification ile olusturdugumuz query'i calistirip hoax'lari listeye atalim
-		List<Hoax> hoaxesToBeRemoved = hoaxRepository.findAll(userOwned);
-		// listedeki hoax'lari silelim
-		hoaxRepository.deleteAll(hoaxesToBeRemoved);
-	}
-	
 	
 }

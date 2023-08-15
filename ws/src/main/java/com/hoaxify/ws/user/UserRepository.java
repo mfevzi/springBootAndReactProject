@@ -14,7 +14,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	// kullaniciAdi bu olmayanlari getir
 	Page<User> findByKullaniciAdiNot(String kullaniciAdi, Pageable page);
 	
-	// kullanici adina gore kullanici silme islemi
-	@Transactional //spring'e diyoruz ki eger transaction yoksa transaction olustur
-	void deleteByKullaniciAdi(String kullaniciAdi);
 }

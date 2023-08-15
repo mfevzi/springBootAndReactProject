@@ -40,6 +40,6 @@ public class Hoax {
 	// ..burada diyoruz ki hoax tablosunda iliskiyi belirten bir alan olmasin iliski fileAttachment tablosundaki..
 	//..hoax field'i uzerinden yurusun. Bu sekilde cift yonlu bir iliski kurduk ama hoax tablosuna yeni alan..
 	//..acmadik. Artik hoax'tan fileAttachment'a da ulasabiliriz
-	@OneToOne(mappedBy = "hoax")
+	@OneToOne(mappedBy = "hoax", cascade = CascadeType.REMOVE)
 	private FileAttachment fileAttachment;
 }

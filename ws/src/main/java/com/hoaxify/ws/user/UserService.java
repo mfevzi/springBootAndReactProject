@@ -32,16 +32,13 @@ public class UserService {
 	// spring security kullanarak password sifreleme yapacagiz
 	PasswordEncoder passwordEncoder;
 	FileService fileService;
-	HoaxService hoaxService;
 	
 	// @Autowired eger sinif icinde sadece bir tane constructor varsa 'AutoWired'..
 	// ..anotasyonuna ihtiyac duyulmaz. Koysak da olur
-	// 'Circular Dependency' hatasindan kurtulmak icin 'HoaxService'i '@Lazy' anotasyonu ile inject ettik
-	public UserService(UserRepository userRepository, FileService fileService, @Lazy HoaxService hoaxService) {
+	public UserService(UserRepository userRepository, FileService fileService) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = new BCryptPasswordEncoder();
 		this.fileService = fileService;
-		this.hoaxService = hoaxService;
 	}
 
 	public void save(User user) {
@@ -96,9 +93,10 @@ public class UserService {
 	}
 
 	public void deleteUser(String username) {
-		// user'i silmeden once constraint'e takilmamak icin user'in hoax'larini silelim
-		hoaxService.deleteHoaxesOfUser(username);
-		userRepository.deleteByKullaniciAdi(username);
+		// user'in profil fotosunu ve user'in hoax'larindaki attachment file'lari silelim
+		User inDb = userRepository.findByKullaniciAdi(username);
+		fileService.deleteAllStoredFilesForUser(inDb);
+		userRepository.delete(inDb);
 	}
 
 }

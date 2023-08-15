@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hoaxify.ws.configuration.AppConfiguration;
+import com.hoaxify.ws.user.User;
 
 @Service
 @EnableScheduling //tarih ayarli olarak metot calistirmak istedigimizde kullanabilirz
@@ -129,6 +130,17 @@ public class FileService {
 			deleteAttachmentFile(file.getName());
 			// delete from database
 			fileAttachmentRepository.deleteById(file.getId());
+		}
+	}
+
+	public void deleteAllStoredFilesForUser(User inDb) {
+		// profil fotosunu silelim
+		deleteProfileImage(inDb.getImage());
+		// silinecek attachment'lari listeye alalim
+		List<FileAttachment> filesToBeRemoved = fileAttachmentRepository.findByHoaxUser(inDb);
+		// hoax'lardaki attachment file'lari silelim
+		for(FileAttachment file:filesToBeRemoved) {
+			deleteAttachmentFile(file.getName());
 		}
 	}
 
