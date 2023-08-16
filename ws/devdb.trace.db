@@ -1,0 +1,3 @@
+2023-08-15 20:04:57 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM FILE_ATTACHMENT HOAX [*]TOKEN USERS"; SQL statement:
+SELECT * FROM FILE_ATTACHMENT HOAX TOKEN USERS [42000-214]

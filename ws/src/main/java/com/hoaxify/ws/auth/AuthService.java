@@ -92,4 +92,9 @@ public class AuthService {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
+	public void clearToken(String token) {
+		// token'i vt'den silelim
+		tokenRepository.deleteById(token);
+	}
+
 }
